@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    /* ✅ Compatibilidad con Vite y módulos dinámicos */
+    "target": "ESNext",
+    "module": "ESNext",
+    "types": ["vite/client"],
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+
+    /* ✅ Buenas prácticas y chequeos */
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    /* ✅ Ruta base */
+    "baseUrl": "./src"
+  },
+  "include": ["src", "vite.config.ts"]
+}

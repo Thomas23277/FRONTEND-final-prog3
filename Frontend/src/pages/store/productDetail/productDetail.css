@@ -1,0 +1,157 @@
+/* === General === */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7f5;
+  margin: 0;
+  padding: 0;
+}
+
+/* === Header === */
+.header {
+  background-color: #194d33;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centra el logo */
+  padding: 15px 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  position: relative; /* permite posicionar el botón */
+}
+
+.back-btn {
+  position: absolute;
+  left: 25px;
+  background-color: #f1f1f1;
+  color: #194d33;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.back-btn:hover {
+  background-color: #e2e2e2;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* === Contenedor del producto === */
+.product-container {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  max-width: 850px;
+  margin: 40px auto;
+  padding: 30px;
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.product-image img {
+  width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-info h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #194d33;
+}
+
+.product-info p {
+  color: #333;
+  margin: 6px 0;
+}
+
+.price {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #145a32;
+}
+
+/* === Badge de estado === */
+.badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.badge.available {
+  background-color: #28a745;
+}
+
+.badge.unavailable {
+  background-color: #dc3545;
+}
+
+/* === Selector de cantidad === */
+.quantity-selector {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-selector input {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* === Botón agregar === */
+.add-btn {
+  margin-top: 15px;
+  background-color: #145a32;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-btn:hover {
+  background-color: #0d3f23;
+}
+
+/* === Mensaje de confirmación === */
+#message {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .product-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .product-image img {
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .back-btn {
+    left: 10px;
+    padding: 6px 12px;
+  }
+}

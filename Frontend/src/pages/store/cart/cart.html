@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrito | FoodStore</title>
+  <link rel="stylesheet" href="./cart.css" />
+</head>
+<body>
+  <header class="header">
+    <button id="back-btn" class="back-btn">⬅ Volver</button>
+    <h1 class="logo">🥗 FoodStore</h1>
+  </header>
+
+  <main>
+    <section class="cart-container">
+      <h2>🛒 Tu carrito</h2>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-footer">
+        <p id="cart-total">Total: $0</p>
+        <div class="cart-actions">
+          <button id="clear-cart-btn" class="danger-btn">Vaciar carrito</button>
+          <button id="checkout-btn" class="buy-btn">Comprar</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./cart.ts" defer></script>
+</body>
+</html>

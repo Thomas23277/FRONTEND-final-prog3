@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalle del Producto | FoodStore</title>
+  <link rel="stylesheet" href="./productDetail.css" />
+</head>
+<body>
+  <header class="header">
+    <button id="back-btn" class="back-btn">⬅ Volver</button>
+    <h1 class="logo">🥗 FoodStore</h1>
+  </header>
+
+  <main>
+    <section class="product-container">
+      <div class="product-image">
+        <img id="product-img" src="" alt="Imagen del producto" />
+      </div>
+      <div class="product-info">
+        <h2 id="product-name"></h2>
+        <p id="product-desc"></p>
+        <p class="price" id="product-price"></p>
+        <span id="product-status" class="badge"></span>
+
+        <div class="quantity-selector">
+          <label for="quantity">Cantidad:</label>
+          <input id="quantity" type="number" min="1" value="1" />
+        </div>
+
+        <button id="add-to-cart-btn" class="add-btn">🛒 Agregar al carrito</button>
+        <p id="message"></p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./productDetail.ts" defer></script>
+</body>
+</html>

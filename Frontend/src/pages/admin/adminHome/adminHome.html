@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administrador | FoodStore</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(to right, #f8f8f8, #e0e0e0);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background: #333;
+      color: #fff;
+      padding: 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    main {
+      padding: 2rem;
+    }
+
+    button.logout-btn {
+      background-color: #ff4d4d;
+      border: none;
+      color: white;
+      padding: 0.8rem 1.4rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 1.5rem;
+    }
+
+    button.logout-btn:hover {
+      background-color: #e63946;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Panel de Administración</h1>
+  </header>
+
+  <main>
+    <h2>¡Bienvenido, Administrador! 👋</h2>
+    <p>Si ves esto, el login y la redirección funcionaron correctamente.</p>
+    <button class="logout-btn" id="logoutBtn">Cerrar sesión</button>
+  </main>
+
+  <script>
+    // 🚨 Verificación de acceso: solo el admin puede estar aquí
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "admin") {
+      alert("Acceso denegado. Solo el administrador puede acceder a esta página.");
+      window.location.href = "/src/pages/auth/login/login.html";
+    }
+
+    // 🚪 Cerrar sesión
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "/src/pages/auth/login/login.html";
+    });
+  </script>
+
+  <script type="module" src="/src/pages/admin/adminHome/adminHome.ts"></script>
+</body>
+</html>

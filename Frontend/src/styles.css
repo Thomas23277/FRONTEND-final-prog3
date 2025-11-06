@@ -1,0 +1,136 @@
+/* ===========================
+   🌿 LOGIN / REGISTRO ELEGANTE
+   =========================== */
+
+/* Fondo general */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-color: #173217; /* color de respaldo por si no carga la imagen */
+  background-image: url("/src/assets/bg-login.png");
+  background-size: cover;       /* cubre toda la pantalla */
+  background-position: center;  /* centra el patrón */
+  background-repeat: repeat;    /* repite la textura */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  text-align: center;
+}
+
+
+/* ===== CONTENEDOR DEL FORMULARIO ===== */
+form {
+  background-color: rgba(255, 255, 255, 0.9); /* Cuadro blanco con ligera transparencia */
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 25px rgba(0, 255, 100, 0.15);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+
+/* Animación de aparición */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== TÍTULO DENTRO DEL FORMULARIO ===== */
+form h1,
+form h2 {
+  margin-top: 0;
+  margin-bottom: 1.8rem;
+  font-size: 2rem;
+  color: #1b381b; /* Verde oscuro con contraste */
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* ===== ETIQUETAS ===== */
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2d4f2d;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+/* ===== INPUTS ===== */
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1.3rem;
+  border: 1px solid #cce3cc;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #1a2e1a;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+form input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
+  outline: none;
+}
+
+/* ===== BOTÓN PRINCIPAL ===== */
+form button {
+  width: 100%;
+  padding: 0.9rem;
+  background-color: #3a6f3a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+form button:hover {
+  background-color: #4a8f4a;
+  transform: translateY(-2px);
+}
+
+form button:active {
+  transform: translateY(1px);
+}
+
+/* ===== TEXTO DEBAJO ===== */
+form p,
+form div,
+form span {
+  margin-top: 1rem;
+  color: #1b381b;
+  font-size: 0.95rem;
+}
+
+/* ===== LINKS ===== */
+form a {
+  color: #4a8f4a;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+form a:hover {
+  color: #357a35;
+  text-decoration: underline;
+}
+
+/* ===== ESTILO PARA EL H1 DEL INDEX (fuera del form) ===== */
+body h1 {
+  color: #a0e0a0;
+  font-size: 2rem;
+  text-align: center;
+}

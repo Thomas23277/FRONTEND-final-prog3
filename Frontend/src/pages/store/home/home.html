@@ -1,0 +1,61 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoodStore</title>
+  <link rel="stylesheet" href="./home.css" />
+</head>
+<body>
+  <!-- 🔝 Navbar -->
+  <header class="navbar">
+    <div class="navbar-left">
+      <button id="menu-btn" class="menu-btn" aria-label="Abrir menú">☰</button>
+      <h1 class="logo">🥗 FoodStore</h1>
+    </div>
+
+    <div class="navbar-center">
+      <div id="user-info" class="user-info">👋 Hola, Invitado</div>
+    </div>
+
+    <div class="navbar-right">
+      <input id="search-input-top" type="text" placeholder="Buscar productos..." />
+      <button id="search-btn-top" class="search-btn" aria-label="Buscar">🔍</button>
+
+      <!-- 🛒 Carrito -->
+      <button id="cart-button" class="cart-btn" title="Ver carrito" aria-label="Ver carrito">
+        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+        <span id="cart-badge" class="cart-badge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 🧭 Sidebar -->
+  <aside id="sidebar" class="sidebar" aria-hidden="true">
+    <ul>
+      <li><strong>Categorías</strong></li>
+      <li><select id="category-filter-side" aria-label="Filtrar por categoría"></select></li>
+      <li><strong>Ordenar</strong></li>
+      <li>
+        <select id="sort-side" aria-label="Ordenar productos">
+          <option value="">Sin orden</option>
+          <option value="name-asc">A–Z</option>
+          <option value="name-desc">Z–A</option>
+          <option value="price-asc">Menor precio</option>
+          <option value="price-desc">Mayor precio</option>
+        </select>
+      </li>
+      <li><button id="logout-sidebar" class="logout-btn">Cerrar sesión</button></li>
+    </ul>
+  </aside>
+
+  <!-- 🛍️ Productos -->
+  <main id="main-content">
+    <div id="product-count" aria-live="polite">0 productos</div>
+    <section id="product-list" class="product-grid" aria-label="Listado de productos"></section>
+  </main>
+
+  <script type="module" src="./home.ts" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js" defer></script>
+</body>
+</html>

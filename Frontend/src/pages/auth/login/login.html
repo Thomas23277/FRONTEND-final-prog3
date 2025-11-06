@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión | FoodStore</title>
+
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+
+<body>
+  <main class="login-container">
+    <!-- 🔧 ID corregido -->
+    <form id="login-form">
+      <h2>Iniciar sesión</h2>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" required />
+
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" required />
+
+      <button type="submit">Iniciar Sesión</button>
+
+      <!-- 📩 Mensajes -->
+      <div id="msg" class="msg"></div>
+
+      <p>¿No tenés cuenta?
+        <a href="/src/pages/auth/register/register.html">Registrate</a>
+      </p>
+    </form>
+  </main>
+
+  <!-- 🚀 Script principal (solo uno) -->
+  <script type="module" src="/src/pages/auth/login/login.ts"></script>
+</body>
+</html>
