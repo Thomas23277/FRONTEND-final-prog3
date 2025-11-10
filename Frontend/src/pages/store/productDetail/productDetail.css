@@ -28,10 +28,12 @@ body {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .back-btn:hover {
   background-color: #e2e2e2;
+  transform: scale(1.03);
 }
 
 .logo {
@@ -56,6 +58,7 @@ body {
   width: 320px;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  object-fit: cover;
 }
 
 .product-info {
@@ -79,22 +82,22 @@ body {
   color: #145a32;
 }
 
-/* === Badge de estado === */
-.badge {
+/* === Estado del producto === */
+#product-status {
   display: inline-block;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
   padding: 6px 10px;
   border-radius: 8px;
   color: white;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-top: 8px;
 }
 
-.badge.available {
+#product-status.available {
   background-color: #28a745;
 }
 
-.badge.unavailable {
+#product-status.unavailable {
   background-color: #dc3545;
 }
 
@@ -106,12 +109,18 @@ body {
   gap: 10px;
 }
 
+.quantity-selector label {
+  font-weight: 500;
+  color: #194d33;
+}
+
 .quantity-selector input {
-  width: 60px;
+  width: 70px;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 6px;
   text-align: center;
+  font-size: 1rem;
 }
 
 /* === Botón agregar === */
@@ -124,17 +133,49 @@ body {
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .add-btn:hover {
   background-color: #0d3f23;
+  transform: scale(1.03);
+}
+
+.add-btn:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
+  opacity: 0.8;
 }
 
 /* === Mensaje de confirmación === */
 #message {
-  margin-top: 10px;
+  margin-top: 12px;
   font-weight: 500;
+  font-size: 0.95rem;
+  min-height: 20px;
+  transition: opacity 0.3s ease;
+}
+
+#message.success {
+  color: #28a745;
+}
+
+#message.error {
+  color: #dc3545;
+}
+
+/* === Badge del carrito === */
+#cart-badge {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: none;
 }
 
 /* === Responsive === */
@@ -153,5 +194,13 @@ body {
   .back-btn {
     left: 10px;
     padding: 6px 12px;
+  }
+
+  .add-btn {
+    width: 100%;
+  }
+
+  #message {
+    text-align: center;
   }
 }

@@ -1,5 +1,5 @@
 // src/pages/auth/login/login.ts
-import { apiPost } from '../../../utils/api';
+import { login } from '../../../utils/auth';
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('login-form') as HTMLFormElement | null;
@@ -16,30 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!email || !password) {
       if (msg) {
-        msg.textContent = 'Completá email y contraseña';
+        msg.textContent = 'Debes ingresar tu correo y contraseña.';
         msg.style.color = '#c0392b';
       }
       return;
     }
 
     try {
-      const res = await apiPost('/auth/login', { email, password });
+      // 🔹 Llamamos a /api/auth/login
+      const user = await login(email, password);
 
-      // Estructura flexible (según backend)
-      const user = res.usuario || res.user || res;
-      if (!user || (!user.id && !user.email && !res.token)) {
-        throw new Error('Respuesta inválida del servidor');
+      if (!user || !user.id || !user.email) {
+        throw new Error('Respuesta inválida del servidor.');
       }
 
-      const name = user.nombre || user.name || user.nombreCompleto || user.fullName || user.email;
-
-      // ✅ Guardamos con la clave 'usuario'
-      localStorage.setItem('usuario', JSON.stringify({
-        id: user.id || null,
-        nombre: name,
-        email: user.email || email,
-        token: res.token || null
-      }));
+      localStorage.setItem('foodstore_user', JSON.stringify(user));
 
       if (msg) {
         msg.textContent = 'Inicio de sesión correcto. Redirigiendo...';

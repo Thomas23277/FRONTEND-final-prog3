@@ -1,69 +1,120 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const backBtn = document.getElementById("back-btn") as HTMLButtonElement;
-  const nameEl = document.getElementById("product-name") as HTMLElement;
-  const descEl = document.getElementById("product-desc") as HTMLElement;
-  const priceEl = document.getElementById("product-price") as HTMLElement;
-  const imgEl = document.getElementById("product-img") as HTMLImageElement;
-  const statusEl = document.getElementById("product-status") as HTMLElement;
-  const quantityInput = document.getElementById("quantity") as HTMLInputElement;
-  const addBtn = document.getElementById("add-to-cart-btn") as HTMLButtonElement;
-  const messageEl = document.getElementById("message") as HTMLElement;
+document.addEventListener("DOMContentLoaded", async () => {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
 
-  // 🔙 Volver al Home
-  backBtn.addEventListener("click", () => {
-    window.location.href = "/src/pages/store/home/home.html";
+  // 🧩 Selección de elementos con tipos explícitos
+  const imgEl = document.getElementById("product-img") as HTMLImageElement | null;
+  const nameEl = document.getElementById("product-name") as HTMLElement | null;
+  const descEl = document.getElementById("product-desc") as HTMLElement | null;
+  const priceEl = document.getElementById("product-price") as HTMLElement | null;
+  const statusEl = document.getElementById("product-status") as HTMLElement | null;
+  const quantityEl = document.getElementById("quantity") as HTMLInputElement | null;
+  const addBtn = document.getElementById("add-to-cart-btn") as HTMLButtonElement | null;
+  const messageEl = document.getElementById("message") as HTMLElement | null;
+  const backBtn = document.getElementById("back-btn") as HTMLButtonElement | null;
+  const cartBadge = document.getElementById("cart-badge") as HTMLElement | null;
+
+  // 🔙 Botón "Volver"
+  if (backBtn) backBtn.addEventListener("click", () => window.history.back());
+
+  // 🛒 Funciones del carrito
+  function loadCart() {
+    try {
+      return JSON.parse(localStorage.getItem("carrito") || "[]");
+    } catch {
+      return [];
+    }
+  }
+
+  function saveCart(c: any[]) {
+    localStorage.setItem("carrito", JSON.stringify(c));
+    updateBadge(); // 🔹 Actualiza el contador cada vez que se guarda el carrito
+  }
+
+  function updateBadge() {
+    if (!cartBadge) return;
+    const c = loadCart();
+    const t = c.reduce((s: number, i: any) => s + (Number(i.cantidad) || 0), 0);
+    cartBadge.textContent = String(t);
+    cartBadge.style.display = t > 0 ? "inline-block" : "none";
+  }
+
+  // 🔹 Sincroniza el contador si cambia el carrito en otra pestaña
+  window.addEventListener("storage", (e) => {
+    if (e.key === "carrito") updateBadge();
   });
 
-  // 🧾 Obtener producto seleccionado
-  const productoSeleccionado = JSON.parse(localStorage.getItem("productoSeleccionado") || "null");
-
-  if (!productoSeleccionado) {
-    document.querySelector(".product-container")!.innerHTML = "<p>Error al cargar el producto.</p>";
+  // 🚫 Si no hay ID, mostramos mensaje
+  if (!id) {
+    if (messageEl) messageEl.textContent = "Producto no encontrado";
     return;
   }
 
-  // 📦 Mostrar datos del producto
-  nameEl.textContent = productoSeleccionado.nombre;
-  descEl.textContent = productoSeleccionado.descripcion;
-  priceEl.textContent = `$${productoSeleccionado.precio.toLocaleString()}`;
-  statusEl.textContent = productoSeleccionado.disponible ? "Disponible" : "Sin stock";
-  statusEl.className = `badge ${productoSeleccionado.disponible ? "available" : "unavailable"}`;
-  imgEl.src = `https://picsum.photos/seed/${encodeURIComponent(productoSeleccionado.nombre)}/600/400`;
+  try {
+    const r = await fetch(`http://localhost:8080/api/producto/${id}`);
+    if (!r.ok) throw new Error("no product");
+    const product = await r.json();
+    const stock = Number(product.stock) || 0;
 
-  // 🛒 Agregar al carrito
-  addBtn.addEventListener("click", () => {
-    const cantidad = parseInt(quantityInput.value);
+    if (imgEl)
+      imgEl.src =
+        product.imagen ||
+        `https://picsum.photos/seed/${encodeURIComponent(product.nombre)}/400/300`;
+    if (nameEl) nameEl.textContent = product.nombre;
+    if (descEl) descEl.textContent = product.descripcion || "";
+    if (priceEl) priceEl.textContent = `$${product.precio.toLocaleString()}`;
 
-    if (!productoSeleccionado.disponible) {
-      messageEl.textContent = "⚠️ Este producto no está disponible.";
-      messageEl.style.color = "red";
-      return;
+    if (statusEl && addBtn) {
+      if (stock > 0) {
+        statusEl.textContent = `Disponible (${stock} unidades)`;
+        statusEl.classList.add("available");
+      } else {
+        statusEl.textContent = "Sin stock";
+        statusEl.classList.add("unavailable");
+        addBtn.disabled = true;
+      }
     }
 
-    if (cantidad < 1) {
-      messageEl.textContent = "❗ Ingresa una cantidad válida.";
-      messageEl.style.color = "red";
-      return;
+    // 🧃 Agregar al carrito
+    if (addBtn) {
+      addBtn.addEventListener("click", () => {
+        if (!quantityEl || !messageEl) return;
+
+        const cantidad = Math.max(1, Number(quantityEl.value) || 1);
+        if (cantidad > stock) {
+          messageEl.textContent = `No hay suficiente stock. Disponible: ${stock}`;
+          return;
+        }
+
+        const cart = loadCart();
+        const existing = cart.find((it: any) => it.id === product.id);
+
+        if (existing) {
+          if (existing.cantidad + cantidad > stock) {
+            messageEl.textContent = `Stock insuficiente. Solo quedan ${stock}`;
+            return;
+          }
+          existing.cantidad += cantidad;
+        } else {
+          cart.push({
+            id: product.id,
+            nombre: product.nombre,
+            precio: product.precio,
+            imagen: product.imagen,
+            cantidad,
+            stock,
+          });
+        }
+
+        saveCart(cart);
+        messageEl.textContent = "✅ Producto agregado al carrito.";
+        quantityEl.value = "1";
+      });
     }
 
-    // --- Guardar en carrito ---
-    const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-    const existente = carrito.find((item: any) => item.id === productoSeleccionado.id);
-
-    if (existente) {
-      existente.cantidad += cantidad;
-    } else {
-      carrito.push({ ...productoSeleccionado, cantidad });
-    }
-
-    localStorage.setItem("carrito", JSON.stringify(carrito));
-
-    messageEl.textContent = "✅ Producto agregado al carrito.";
-    messageEl.style.color = "green";
-
-    // 🔄 Redirigir al home después de 1.5s
-    setTimeout(() => {
-      window.location.href = "/src/pages/store/home/home.html";
-    }, 1500);
-  });
+    updateBadge();
+  } catch (e) {
+    console.error(e);
+    if (messageEl) messageEl.textContent = "Error al cargar producto";
+  }
 });

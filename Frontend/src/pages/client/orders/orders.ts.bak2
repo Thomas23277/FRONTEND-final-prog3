@@ -1,0 +1,36 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const ordersContainer = document.getElementById("orders-list") as HTMLElement;
+
+  async function loadOrders() {
+    try {
+      const resp = await fetch("http://localhost:8080/api/pedidos");
+      if (!resp.ok) throw new Error("Error al obtener pedidos");
+      const pedidos = await resp.json();
+
+      if (!ordersContainer) return;
+      ordersContainer.innerHTML = "";
+      if (!Array.isArray(pedidos) || pedidos.length === 0) {
+        ordersContainer.innerHTML = "<p>No hay pedidos.</p>";
+        return;
+      }
+
+      pedidos.forEach((p: any) => {
+        const card = document.createElement("div");
+        card.className = "order-card";
+        const detalles = (p.detalles || []).map((d: any) =>
+          `<li>${d.producto?.nombre || 'Producto #' + (d.producto?.id || '')} - Cant: ${d.cantidad} - $${d.precioUnitario}</li>`
+        ).join("");
+        card.innerHTML = `
+          <h4>Pedido #${p.id} - ${p.fecha || ""}</h4>
+          <ul>${detalles}</ul>
+        `;
+        ordersContainer.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Error cargando pedidos:", err);
+      if (ordersContainer) ordersContainer.innerHTML = "<p>Error al cargar pedidos.</p>";
+    }
+  }
+
+  loadOrders();
+});

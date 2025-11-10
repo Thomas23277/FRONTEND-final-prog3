@@ -188,3 +188,41 @@ main{
   #search-input-top{ width:160px; }
   .product-grid{ gap:12px; }
 }
+
+/* 🔹 Botón de "Agregar" en las tarjetas */
+.add-cart-btn {
+  background-color: #15bc2b;        /* Azul principal */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  width: 100%;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Hover: color más intenso y sombra suave */
+.add-cart-btn:hover {
+  background-color: #044db4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Al hacer click */
+.add-cart-btn:active {
+  transform: scale(0.97);
+  background-color: #004bb5;
+}
+
+/* Cuando está deshabilitado (sin stock) */
+.add-cart-btn:disabled {
+  background-color: #aaa;
+  color: #f0f0f0;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.7;
+}

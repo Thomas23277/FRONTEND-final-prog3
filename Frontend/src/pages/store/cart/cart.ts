@@ -1,106 +1,243 @@
+// src/pages/store/cart/cart.ts
+
+type Item = {
+  id: number;
+  nombre: string;
+  precio: number;
+  cantidad?: number;
+};
+
+type User = {
+  id?: number;
+  nombre?: string;
+  email?: string;
+  role?: string;
+} | null;
+
 document.addEventListener("DOMContentLoaded", () => {
-  const cartItemsContainer = document.getElementById("cart-items") as HTMLElement;
-  const cartTotalEl = document.getElementById("cart-total") as HTMLElement;
-  const clearCartBtn = document.getElementById("clear-cart-btn") as HTMLButtonElement | null;
-  const checkoutBtn = document.getElementById("checkout-btn") as HTMLButtonElement | null;
+  const API_URL = "http://localhost:8080";
+
+  // 🛒 Inicializar carrito
+  let carrito: Item[] = [];
+  try {
+    const raw = localStorage.getItem("carrito");
+    carrito = raw ? (JSON.parse(raw) as Item[]) : [];
+  } catch {
+    carrito = [];
+  }
+
+  // 👤 Inicializar usuario
+  let user: User = null;
+  try {
+    const rawUser = localStorage.getItem("foodstore_user");
+    user = rawUser ? (JSON.parse(rawUser) as User) : null;
+  } catch {
+    user = null;
+  }
+
+  // 🔗 Elementos del DOM
+  const btnComprar = document.getElementById("btnComprar") as HTMLButtonElement | null;
+  const btnVaciar = document.getElementById("btnVaciar") as HTMLButtonElement | null;
+  const contenedorCarrito = document.getElementById("carrito") as HTMLElement | null;
+  const totalSpan = document.getElementById("total") as HTMLElement | null;
+  const cartBadge = document.getElementById("cart-badge") as HTMLElement | null;
   const backBtn = document.getElementById("back-btn") as HTMLButtonElement | null;
 
-  function loadCartFromStorage() {
-    try {
-      return JSON.parse(localStorage.getItem("carrito") || "[]");
-    } catch {
-      return [];
+  if (!contenedorCarrito || !totalSpan) return;
+
+  // 🔹 Función: actualizar badge del carrito
+  function updateCartBadge(): void {
+    const total = carrito.reduce((sum, i) => sum + (Number(i.cantidad) || 0), 0);
+    if (cartBadge) {
+      cartBadge.textContent = String(total);
+      cartBadge.style.display = total > 0 ? "inline-block" : "none";
     }
   }
 
-  function saveCartToStorage(cart: any[]) {
-    localStorage.setItem("carrito", JSON.stringify(cart));
+  // 🔹 Guardar carrito
+  function saveCart(): void {
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    updateCartBadge();
   }
 
-  function renderCart() {
-    const carrito = loadCartFromStorage();
-    cartItemsContainer.innerHTML = "";
+  // 🔹 Renderizar carrito
+  function renderCarrito(): void {
+    if (!contenedorCarrito || !totalSpan) return;
+    contenedorCarrito.innerHTML = "";
+    let total = 0;
 
     if (carrito.length === 0) {
-      cartItemsContainer.innerHTML = "<p>🛍️ Tu carrito está vacío.</p>";
-      cartTotalEl.textContent = "Total: $0";
-
-      // ocultar botones si está vacío
-      if (clearCartBtn) clearCartBtn.style.display = "none";
-      if (checkoutBtn) checkoutBtn.style.display = "none";
+      contenedorCarrito.innerHTML = `<p>🛒 El carrito está vacío.</p>`;
+      totalSpan.textContent = "Total: $0";
+      updateCartBadge();
       return;
     }
 
-    // mostrar botones
-    if (clearCartBtn) clearCartBtn.style.display = "inline-block";
-    if (checkoutBtn) checkoutBtn.style.display = "inline-block";
+    carrito.forEach((item, index) => {
+      const cantidad = item.cantidad ?? 1;
+      const subtotal = item.precio * cantidad;
+      total += subtotal;
 
-    let total = 0;
-    carrito.forEach((item: any, index: number) => {
-      const itemEl = document.createElement("div");
-      itemEl.className = "cart-item";
-      itemEl.innerHTML = `
-        <div class="item-info">
-          <strong>${item.nombre}</strong> - $${item.precio.toLocaleString()}
-          <br />
-          <label>Cantidad:</label>
-          <input type="number" min="1" value="${item.cantidad}" class="qty-input" data-index="${index}">
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `
+        <div class="cart-item-info">
+          <h4>${escapeHtml(item.nombre)}</h4>
+          <p>Precio: $${item.precio.toLocaleString()}</p>
+          <p>Subtotal: $${subtotal.toLocaleString()}</p>
         </div>
-        <button class="remove-btn" data-index="${index}">❌</button>
+        <div class="qty-controls">
+          <button id="dec-${index}">-</button>
+          <input type="number" id="cant-${index}" min="1" value="${cantidad}" style="width:50px;text-align:center;">
+          <button id="inc-${index}">+</button>
+        </div>
+        <button id="del-${index}" class="remove-btn">🗑</button>
       `;
-      cartItemsContainer.appendChild(itemEl);
-      total += item.precio * item.cantidad;
-    });
+      contenedorCarrito.appendChild(div);
 
-    cartTotalEl.textContent = `Total: $${total.toLocaleString()}`;
+      const inputCantidad = div.querySelector(`#cant-${index}`) as HTMLInputElement | null;
+      const btnInc = div.querySelector(`#inc-${index}`) as HTMLButtonElement | null;
+      const btnDec = div.querySelector(`#dec-${index}`) as HTMLButtonElement | null;
+      const btnEliminar = div.querySelector(`#del-${index}`) as HTMLButtonElement | null;
 
-    // Eventos para eliminar productos individuales
-    document.querySelectorAll(".remove-btn").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        const index = parseInt((e.target as HTMLElement).getAttribute("data-index") || "0");
-        const cart = loadCartFromStorage();
-        cart.splice(index, 1);
-        saveCartToStorage(cart);
-        renderCart();
+      inputCantidad?.addEventListener("change", () => {
+        carrito[index].cantidad = Math.max(1, parseInt(inputCantidad.value) || 1);
+        saveCart();
+        renderCarrito();
+      });
+
+      btnInc?.addEventListener("click", () => {
+        carrito[index].cantidad = (carrito[index].cantidad || 1) + 1;
+        saveCart();
+        renderCarrito();
+      });
+
+      btnDec?.addEventListener("click", () => {
+        carrito[index].cantidad = Math.max(1, (carrito[index].cantidad || 1) - 1);
+        saveCart();
+        renderCarrito();
+      });
+
+      btnEliminar?.addEventListener("click", () => {
+        carrito.splice(index, 1);
+        saveCart();
+        renderCarrito();
       });
     });
 
-    // Actualizar cantidad
-    document.querySelectorAll(".qty-input").forEach((input) => {
-      input.addEventListener("change", (e) => {
-        const target = e.target as HTMLInputElement;
-        const index = parseInt(target.getAttribute("data-index") || "0");
-        const newQty = Math.max(1, parseInt(target.value) || 1);
-        const cart = loadCartFromStorage();
-        cart[index].cantidad = newQty;
-        saveCartToStorage(cart);
-        renderCart();
-      });
-    });
+    totalSpan.textContent = `Total: $${total.toLocaleString()}`;
   }
 
-  // Vaciar carrito
-  if (clearCartBtn) {
-    clearCartBtn.addEventListener("click", () => {
+  function escapeHtml(str: string): string {
+    return str.replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
+    }[m] || m));
+  }
+
+  // 🧹 Vaciar carrito
+  btnVaciar?.addEventListener("click", () => {
+    if (confirm("¿Seguro que desea vaciar el carrito?")) {
       localStorage.removeItem("carrito");
-      renderCart();
-    });
-  }
+      carrito = [];
+      renderCarrito();
+    }
+  });
 
-  // Comprar (ficticio)
-  if (checkoutBtn) {
-    checkoutBtn.addEventListener("click", () => {
-      alert("🛍️ Simulación de compra. ¡Gracias por elegirnos!");
-    });
-  }
+  // 🛒 Comprar
+  btnComprar?.addEventListener("click", async () => {
+    if (!carrito.length) {
+      alert("El carrito está vacío.");
+      return;
+    }
 
-  // Volver al home
-  if (backBtn) {
-    backBtn.addEventListener("click", () => {
-      window.location.href = "/src/pages/store/home/home.html";
-    });
-  }
+    try {
+      // ✅ Verificar usuario
+      if (!user || !user.id) {
+        const nombre = prompt("Ingrese su nombre:") || "Invitado";
+        const email = prompt("Ingrese su email:");
+        if (!email) {
+          alert("Debe ingresar un email válido.");
+          return;
+        }
 
-  // Render inicial
-  renderCart();
+        console.log("Intentando crear o recuperar usuario...");
+
+        // 🔹 Crear o recuperar usuario automáticamente
+        const res = await fetch(`${API_URL}/api/usuarios/login?email=${encodeURIComponent(email)}&nombre=${encodeURIComponent(nombre)}`, {
+          method: "POST",
+        });
+        const text = await res.text();
+
+        if (!res.ok) {
+          alert(`Error al obtener usuario: ${text}`);
+          return;
+        }
+
+        const parsed = JSON.parse(text);
+        user = parsed;
+        localStorage.setItem("foodstore_user", JSON.stringify(user));
+      }
+
+      // 🧠 Verificar que exista realmente en BD
+      const check = await fetch(`${API_URL}/api/usuarios/${user!.id}`);
+      if (!check.ok) {
+        alert("El usuario no existe en la base de datos. Reintente iniciar sesión.");
+        localStorage.removeItem("foodstore_user");
+        user = null;
+        return;
+      }
+
+      // 🧾 Crear pedido
+      const pedido = {
+        fecha: new Date().toISOString(),
+        usuario: { id: user!.id, email: user!.email },
+        detalles: carrito.map((i) => ({
+          cantidad: i.cantidad || 1,
+          precioUnitario: i.precio,
+          subtotal: (i.cantidad || 1) * i.precio,
+          producto: { id: i.id },
+        })),
+      };
+
+      console.log("➡ Enviando pedido:", pedido);
+
+      const resPedido = await fetch(`${API_URL}/api/pedidos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pedido),
+      });
+
+      const textResp = await resPedido.text();
+      console.log("⬅ Respuesta pedido:", resPedido.status, textResp);
+
+      if (!resPedido.ok) {
+        alert(`Error al procesar compra (${resPedido.status}): ${textResp}`);
+        return;
+      }
+
+      alert("✅ Compra realizada con éxito!");
+      localStorage.removeItem("carrito");
+      carrito = [];
+      renderCarrito();
+      updateCartBadge();
+
+    } catch (err) {
+      console.error("Error al procesar compra:", err);
+      alert("Error inesperado al procesar la compra. Revise consola.");
+    }
+  });
+
+  // 🔙 Volver
+  backBtn?.addEventListener("click", () => {
+    if (document.referrer) history.back();
+    else window.location.href = "/src/pages/store/home/home.html";
+  });
+
+  // Inicialización
+  renderCarrito();
+  updateCartBadge();
 });
